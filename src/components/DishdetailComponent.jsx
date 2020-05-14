@@ -1,80 +1,66 @@
-import React, { Component } from "react";
-import {
-  Card,
-  CardImg,
-  CardImgOverlay,
-  CardText,
-  CardBody,
-  CardTitle,
-} from "reactstrap";
+import React from "react";
+import { Card, CardImg, CardText, CardBody, CardTitle } from "reactstrap";
 
-class Dishdetail extends Component {
-  constructor(props) {
-    super(props);
-  }
+function RenderDish({ dish }) {
+  return (
+    <Card>
+      <CardImg top src={dish.image} alt={dish.name} />
+      <CardBody>
+        <CardTitle>{dish.name}</CardTitle>
+        <CardText>{dish.description}</CardText>
+      </CardBody>
+    </Card>
+  );
+}
 
-  renderDish(dish) {
+function RenderComments({ comments }) {
+  if (comments != null) {
+    const options = { year: "numeric", month: "short", day: "2-digit" };
+
     return (
-      <Card>
-        <CardImg top src={dish.image} alt={dish.name} />
-        <CardBody>
-          <CardTitle>{dish.name}</CardTitle>
-          <CardText>{dish.description}</CardText>
-        </CardBody>
-      </Card>
+      <div>
+        <h3>Comments</h3>
+        <ul>
+          {comments.map((comment) => {
+            return (
+              <p key={comment.id}>
+                {comment.comment}
+                <br />
+                -- {comment.author},{" "}
+                {new Intl.DateTimeFormat("en-US", options).format(
+                  new Date(Date.parse(comment.date))
+                )}
+              </p>
+            );
+          })}
+        </ul>
+      </div>
     );
-  }
-
-  renderComments(comments) {
-    if (comments != null) {
-      const options = { year: "numeric", month: "short", day: "2-digit" };
-
-      return (
-        <div>
-          <h3>Comments</h3>
-          <ul>
-            {comments.map((comment) => {
-              return (
-                <React.Fragment>
-                  <p>
-                    {comment.comment}
-                    <br />
-                    -- {comment.author},{" "}
-                    {new Intl.DateTimeFormat("en-US", options).format(
-                      new Date(Date.parse(comment.date))
-                    )}
-                  </p>
-                </React.Fragment>
-              );
-            })}
-          </ul>
-        </div>
-      );
-    } else {
-      return <div></div>;
-    }
-  }
-
-  render() {
-    if (this.props.dish != null)
-      return (
-        <div className="container">
-          <div className="row">
-            <div className="col-12 col-md-5 m-1">
-              {this.renderDish(this.props.dish)}
-            </div>
-            <div className="col-12 col-md-5 m-1">
-              {this.renderComments(this.props.dish.comments)}
-            </div>
-          </div>
-        </div>
-      );
-    else
-      return (
-        <div className="container">
-          <div>no dish selected</div>
-        </div>
-      );
+  } else {
+    return <div></div>;
   }
 }
+
+const Dishdetail = (props) => {
+  if (props.dish != null)
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col-12 col-md-5 m-1">
+            <RenderDish dish={props.dish} />
+          </div>
+          <div className="col-12 col-md-5 m-1">
+            <RenderComments comments={props.dish.comments} />
+          </div>
+        </div>
+      </div>
+    );
+  else
+    return (
+      <div className="container">
+        <div>no dish selected</div>
+      </div>
+    );
+};
+
 export default Dishdetail;
